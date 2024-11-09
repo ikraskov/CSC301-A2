@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Recipe Finder</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f8f8;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        color: #4caf50;
+        margin-top: 20px;
+      }
+
+      form {
+        margin-top: 20px;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 300px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      h2 {
+        margin-top: 20px;
+        color: #333;
+      }
+
+      #results {
+        margin-top: 10px;
+        width: 60%;
+      }
+
+      #results div {
+        background-color: #ffffff;
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #results h3 {
+        color: #4caf50;
+        margin: 0;
+      }
+
+      #results p {
+        margin: 10px 0;
+        color: #555;
+      }
+
+      a {
+        color: #4caf50;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Smart Recipe Finder</h1>
+    <form id="ingredientForm">
+      <label for="ingredients">Enter your ingredients (comma-separated):</label
+      ><br />
+      <input
+        type="text"
+        id="ingredients"
+        name="ingredients"
+        placeholder="e.g., chicken, rice, garlic"
+      />
+      <button type="submit">Find Recipes</button>
+    </form>
+
+    <h2>Recipe Suggestions</h2>
+    <div id="results"></div>
+
+    <script>
+      document
+        .getElementById("ingredientForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const ingredients = document
+            .getElementById("ingredients")
+            .value.split(",");
+
+          fetch("/find_recipes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ingredients: ingredients }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const resultsDiv = document.getElementById("results");
+              resultsDiv.innerHTML = "";
+
+              data.forEach((recipe) => {
+                const recipeDiv = document.createElement("div");
+                recipeDiv.innerHTML = `<h3>${recipe.title}</h3>
+                                           <p>Ingredients: ${recipe.ingredients}</p>
+                                           <p>Link: ${recipe.link}</p>`;
+                resultsDiv.appendChild(recipeDiv);
+              });
+            });
+        });
+    </script>
+  </body>
+</html>
